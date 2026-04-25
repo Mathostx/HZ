@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hormuz Strait — Live Maritime Intel</title>
+  <meta name="description" content="Real-time vessel tracking, news, and intelligence for the Strait of Hormuz and Persian Gulf region." />
+
+  <!-- Fonts -->
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@400,500,700,800&display=swap" rel="stylesheet" />
+
+  <!-- Leaflet map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="dashboard">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <!-- SVG Logo -->
+      <svg class="logo-mark" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-label="Hormuz Strait Intel" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="6" fill="#00b4c8"/>
+        <path d="M6 22 Q10 14 16 16 Q22 18 26 10" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <circle cx="16" cy="16" r="2.5" fill="white"/>
+        <path d="M13 20 L16 13 L19 20" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <div class="logo-text">
+        <span class="logo-name">HORMUZ</span>
+        <span class="logo-sub">STRAIT INTEL</span>
+      </div>
+      <div class="live-badge">
+        <span class="live-dot"></span>
+        LIVE
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-section="overview">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Overview
+      </a>
+      <a href="#" class="nav-item" data-section="vessels">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20 L12 4 L22 20 Z"/><path d="M5 20 C5 20 9 16 12 20 C15 16 19 20 19 20"/></svg>
+        Vessels
+      </a>
+      <a href="#" class="nav-item" data-section="events">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Events
+      </a>
+      <a href="#" class="nav-item" data-section="intel">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Intel Feed
+      </a>
+    </nav>
+
+    <div class="sidebar-section-label">STATUS</div>
+    <div class="status-cards">
+      <div class="status-card">
+        <span class="status-label">Strait Condition</span>
+        <span class="status-value status-elevated">ELEVATED</span>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Active Vessels</span>
+        <span class="status-value" id="vessel-count">Loading…</span>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Last Update</span>
+        <span class="status-value" id="last-update">—</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section-label">REGION WATCH</div>
+    <div class="region-list">
+      <div class="region-item">
+        <span class="region-dot dot-red"></span>
+        <span>Bandar Abbas</span>
+        <span class="region-tag">IRN</span>
+      </div>
+      <div class="region-item">
+        <span class="region-dot dot-yellow"></span>
+        <span>Musandam Peninsula</span>
+        <span class="region-tag">OMN</span>
+      </div>
+      <div class="region-item">
+        <span class="region-dot dot-green"></span>
+        <span>Fujairah Port</span>
+        <span class="region-tag">UAE</span>
+      </div>
+      <div class="region-item">
+        <span class="region-dot dot-blue"></span>
+        <span>Gulf of Oman</span>
+        <span class="region-tag">INT</span>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button data-theme-toggle aria-label="Toggle theme" class="theme-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <span class="footer-text">hormuzstrait.us</span>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="page-title">Strait of Hormuz — Maritime Intelligence</h1>
+        <span class="page-sub">Persian Gulf · Gulf of Oman · 21°N 57°E</span>
+      </div>
+      <div class="topbar-right">
+        <div class="threat-indicator">
+          <span class="threat-label">Threat Level</span>
+          <span class="threat-value threat-high">HIGH</span>
+        </div>
+        <div class="coord-display" id="map-coords">Hover map for coordinates</div>
+        <button class="btn-refresh" id="refresh-btn" onclick="refreshData()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Refresh
+        </button>
+      </div>
+    </header>
+
+    <!-- KPI ROW -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <span class="kpi-label">Oil Tankers</span>
+        <span class="kpi-value" id="kpi-tankers">—</span>
+        <span class="kpi-delta delta-up">+3 vs yesterday</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Cargo Vessels</span>
+        <span class="kpi-value" id="kpi-cargo">—</span>
+        <span class="kpi-delta delta-neutral">stable</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Naval / Military</span>
+        <span class="kpi-value" id="kpi-naval">—</span>
+        <span class="kpi-delta delta-up">+2 vs 48h ago</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Incidents (7d)</span>
+        <span class="kpi-value kpi-alert" id="kpi-incidents">4</span>
+        <span class="kpi-delta delta-down">-1 vs prior week</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Transit Volume</span>
+        <span class="kpi-value">~20%</span>
+        <span class="kpi-delta delta-neutral">of global oil</span>
+      </div>
+    </div>
+
+    <!-- MAP + FEED SPLIT -->
+    <div class="content-split">
+
+      <!-- MAP -->
+      <div class="map-panel">
+        <div class="panel-header">
+          <span class="panel-title">Live Vessel Positions</span>
+          <div class="map-legend">
+            <span class="legend-item"><span class="legend-dot" style="background:#00b4c8"></span>Tanker</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span>Cargo</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#ef4444"></span>Naval</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#a855f7"></span>Unknown</span>
+          </div>
+          <a href="https://www.marinetraffic.com/en/ais/home/centerx:56.3/centery:26.2/zoom:8" target="_blank" class="btn-external">
+            MarineTraffic Live
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 0 1-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+        <div id="map" class="map-container"></div>
+        <div class="map-footer">
+          <span>AIS data via MarineTraffic · Updates every 2 min · <a href="https://www.aishub.net" target="_blank">AISHub</a></span>
+          <span id="vessel-tooltip-info"></span>
+        </div>
+      </div>
+
+      <!-- INTEL FEED -->
+      <div class="feed-panel">
+        <div class="panel-header">
+          <span class="panel-title">Latest Events</span>
+          <div class="feed-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="crit">CRIT</button>
+            <button class="filter-btn" data-filter="high">HIGH</button>
+            <button class="filter-btn" data-filter="stan">STAN</button>
+          </div>
+        </div>
+        <div class="feed-list" id="feed-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- NEWS ROW -->
+    <div class="news-section">
+      <div class="panel-header">
+        <span class="panel-title">Intelligence Feed — Open Source</span>
+        <span class="feed-note">Aggregated from Reuters, AP, USNI, Lloyd's, MEMRI</span>
+      </div>
+      <div class="news-grid" id="news-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
